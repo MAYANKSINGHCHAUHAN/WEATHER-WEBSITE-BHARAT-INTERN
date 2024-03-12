@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <!-- Icon -->
+        <link href="https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css"
+            rel="stylesheet" />
+
+        <title>Weather App</title>
+    </head>
+    <style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(to bottom, #87CEEB, #4682B4);
+}
+
+.wrapper {
+  width: 400px;
+  max-width: 90%;
+  background: #fff;
+  border-radius: 7px;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+}
+
+.wrapper header {
+  color: #333333;
+  font-size: 21px;
+  font-weight: bolder;
+  padding: 16px 15px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #bfbfbf;
+}
+
+/* Arrow icon styling */
+header i {
+  cursor: pointer;
+  font-size: 0em;
+  margin-right: 8px;
+}
+
+.wrapper.active header i {
+  font-size: 30px;
+  margin-left: 5px;
+}
+
+/* Input area styling */
+.wrapper .input-part {
+  margin: 20px 25px 30px;
+}
+
+.input-part .info-txt {
+  display: none;
+  font-size: 17px;
+  text-align: center;
+  padding: 12px 10px;
+  border-radius: 7px;
+  margin-bottom: 15px;
+}
+
+.input-part :where(input, button) {
+  width: 100%;
+  height: 55px;
+  border: none;
+  outline: none;
+  font-size: 18px;
+  border-radius: 7px;
+}
+
+.input-part input {
+  width: 75% !important;
+  text-align: center;
+  border: 1px solid #bfbfbf;
+}
+
+.input-part input:is(:focus, :valid) {
+  border: 1px solid #8d8b8b;
+}
+
+.input-part input::placeholder {
+  color: #bfbfbf;
+}
+
+.searchArea {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.searchIcon {
+  border: 1px solid #bfbfbf;
+  border-radius: 10px;
+  background-color: #8d8b8b;
+  color: white;
+  width: 25%;
+  height: 55px;
+  outline: none;
+  font-size: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding-top: 14px;
+  margin-left: 8px;
+  transition: 0.3s ease;
+}
+
+.searchIcon:hover {
+  background: #6b6a6a;
+}
+
+.input-part .separator {
+  height: 1px;
+  width: 100%;
+  margin: 25px 0;
+  background-color: #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.separator::before {
+  content: "or";
+  color: #ccc;
+  padding: 0 15px;
+  font-size: 19px;
+  background-color: #fff;
+}
+
+.input-part button {
+  color: #fff;
+  cursor: pointer;
+  background-color: #8d8b8b;
+  transition: 0.3s ease;
+}
+
+.input-part button:hover {
+  background: #6b6a6a;
+}
+
+/* Weather area styling */
+.wrapper .weather-part {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.wrapper.active .weather-part {
+  display: flex;
+}
+
+.weather-part img {
+  width: 170px;
+  max-width: 100%;
+}
+
+.weather-part .temp {
+  display: flex;
+  font-size: 70px;
+  margin-top: 10px;
+}
+
+.weather-part .temp .numb {
+  font-weight: 100;
+}
+
+.weather-part .temp .deg {
+  font-size: 40px;
+  margin: 10px 5px 0 0;
+  display: block;
+}
+
+.weather-part .weather {
+  font-size: 17px;
+  text-align: center;
+  margin: -5px 20px 15px;
+}
+
+.weather-part .location {
+  display: flex;
+  font-size: 19px;
+  margin-bottom: 30px;
+  text-align: center;
+  align-items: flex-start;
+  padding: 0 20px;
+}
+
+.location i {
+  font-size: 21px;
+  margin: 0 5px 0 0;
+}
+
+.weather-part .bottom-details {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid #bfbfbf;
+}
+
+.bottom-details .column {
+  width: 100%;
+  display: flex;
+  padding: 15px 0;
+  align-items: center;
+  justify-content: center;
+}
+
+.column i {
+  color: #8d8b8b;
+  font-size: 40px;
+}
+
+.column.humidity {
+  border-left: 1px solid #bfbfbf;
+}
+
+.column .details {
+  margin-left: 3px;
+}
+
+.details .temp,
+.humidity span {
+  font-size: 18px;
+  font-weight: 500;
+  margin-top: -3px;
+}
+
+.details .temp .deg {
+  margin: 0;
+  font-size: 17px;
+  padding: 0 2px 0 1px;
+}
+
+.column .details p {
+  font-size: 14px;
+  margin-top: -2px;
+}
+
+.humidity i {
+  font-size: 37px;
+}
+
+@media screen and (max-width: 770px) {
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .wrapper {
+    max-width: 400px;
+    max-height: 500px;
+    font-size: 20px;
+    margin: 0 20px 0 20px;
+    overflow-y: auto;
+  }
+
+  .wrapper header {
+    font-weight: 400;
+  }
+
+  img {
+    max-width: 170px;
+  }
+}
+</style>
+    <body>
+        <div class="wrapper">
+            <header>
+                <i class="bx bx-left-arrow-alt"></i>Weather App | By MAYANK
+                SINGH CHAUHAN
+            </header>
+
+            <!-- Middle area (input, search, button)-->
+            <section class="input-part">
+                <p class="info-txt"></p>
+                <div class="searchArea">
+                    <input type="text" placeholder="Enter city name"
+                        spellcheck="false" required />
+                    <i class="bx bx-search-alt searchIcon"></i>
+                </div>
+                <div class="separator"></div>
+                <button>Get Device Location</button>
+            </section>
+            <!-- Middle area End -->
+
+            <!-- Weather active area start  -->
+            <section class="weather-part">
+                <img src="wether.jpeg" alt="wether" />
+                <div class="temp">
+                    <span class="numb">_</span>
+                    <span class="deg">°C</span>
+                </div>
+
+                <div class="weather">_</div>
+                <div class="location">
+                    <i class="bx bx-map"></i>
+                    <span>_,_</span>
+                </div>
+
+                <div class="bottom-details">
+                    <div class="column feels">
+                        <i class="bx bxs-thermometer"></i>
+                        <div class="details">
+                            <div class="temp">
+                                <span class="numb-2">_</span>
+                                <span class="deg">°C</span>
+                            </div>
+                            <p>Feels like</p>
+                        </div>
+                    </div>
+
+                    <div class="column humidity">
+                        <i class="bx bxs-droplet-half"></i>
+                        <div class="details">
+                            <span>_</span>
+                            <p>Humidity</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- Weather active area end  -->
+        </div> <!-- Wrapper div end -->
+
+        <script>
+        const wrapper = document.querySelector(".wrapper");  
+inputPart = wrapper.querySelector(".input-part");
+infoTxt = inputPart.querySelector(".info-txt");
+inputField = inputPart.querySelector("input");
+locationBtn = inputPart.querySelector("button");
+wIcon = document.querySelector("img");
+arrowBack = wrapper.querySelector("header i");
+searchIcon = document.querySelector(".searchIcon");
+
+let api;
+
+inputField.onkeydown = function(e){
+    if(e.keyCode == 13 &&  inputField.value != ""){
+        requestApi(inputField.value);  
+    }
+};
+
+searchIcon.addEventListener("click", e => {
+    if (inputField.value === "" || inputField.value === " "){
+        alert("Please enter data in this field")
+    } else {
+        requestApi(inputField.value);
+    }
+});
+
+locationBtn.addEventListener("click", () => {
+    if(navigator.geolocation){
+        navigator.geolocation.getCurrentPosition(onSuccess, onError);
+    }else{
+        alert("Your browser not support geolocation api");
+    }
+});
+
+function requestApi(city){
+api = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=8641075dda9ea5d5c961c48c00929bec`;
+fetchData();
+};
+
+function onSuccess(position){
+const {latitude, longitude} = position.coords; 
+api = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=8641075dda9ea5d5c961c48c00929bec`;
+fetchData();
+};
+
+function onError(error){
+    infoTxt.innerText = error.message;
+    infoTxt.classList.add("error");
+};
+
+function fetchData(){
+    infoTxt.innerText = "Getting weather details...";
+    infoTxt.classList.add("pending");
+    fetch(api).then(response => response.json()).then(result => weatherDetails(result));
+};
+
+function weatherDetails(info){
+    if(info.cod == "404"){
+        infoTxt.classList.replace("pending", "error");
+        infoTxt.innerText = `${inputField.value} isn't a valid city name`;
+    }else {
+    const city = info.name;
+    const country = info.sys.country;
+    const {description, id} = info.weather[0];
+    const {feels_like, humidity, temp} = info.main;
+
+        if(id == 800){
+            wIcon.src="assets/clear.svg"
+        } else if (id >= 200 && id <=232){
+            wIcon.src="assets/strom.svg"
+        } else if (id >= 600 && id <= 622){
+            wIcon.src="assets/snowy.svg"
+        } else if (id >= 701 && id <=781){
+            wIcon.src="assets/haze.svg"
+        } else if (id >= 801 && id <=804){
+            wIcon.src="assets/cloudy.svg"
+        }  else if ((id >= 300 && id <= 321) || (id >= 500 && id <= 531)){
+            wIcon.src="assets/rainy.svg"
+        } 
+
+   wrapper.querySelector(".temp .numb").innerText =  Math.floor(temp);
+   wrapper.querySelector(".weather").innerText = description.toUpperCase();
+   wrapper.querySelector(".location span").innerText =` ${city},${country}`;
+   wrapper.querySelector(".temp .numb-2").innerText = Math.floor(feels_like);
+   wrapper.querySelector(".humidity span").innerText=`${humidity}%`;
+        
+        infoTxt.classList.remove("pending", "error"); 
+        infoTxt.innerText = "";
+        inputField.value ="";
+        wrapper.classList.add("active");
+    }
+};
+
+arrowBack.addEventListener("click", () => {
+    wrapper.classList.remove("active");
+});
+      </script>
+    </body>
+</html>
